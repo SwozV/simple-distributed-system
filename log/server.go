@@ -1,7 +1,7 @@
 package log
 
 import (
-	"io/ioutil"
+	"io"
 	stlog "log"
 	"net/http"
 	"os"
@@ -28,7 +28,7 @@ func RegisterHandlers() {
 	http.HandleFunc("/log", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
-			msg, err := ioutil.ReadAll(r.Body)
+			msg, err := io.ReadAll(r.Body)
 			if err != nil || len(msg) == 0 {
 				w.WriteHeader(http.StatusBadRequest)
 				return
