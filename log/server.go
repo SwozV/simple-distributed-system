@@ -12,7 +12,7 @@ var log *stlog.Logger
 type fileLog string
 
 func (fl fileLog) Write(data []byte) (int, error) {
-	f, err := os.OpenFile(string(fl), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(string(fl), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o600)
 	if err != nil {
 		return 0, err
 	}
@@ -21,7 +21,7 @@ func (fl fileLog) Write(data []byte) (int, error) {
 }
 
 func Run(destination string) {
-	log = stlog.New(fileLog(destination), "go", stlog.LstdFlags)
+	log = stlog.New(fileLog(destination), "go : ", stlog.LstdFlags)
 }
 
 func RegisterHandlers() {
