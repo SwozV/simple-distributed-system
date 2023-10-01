@@ -32,7 +32,7 @@ var reg = registry{
 // 使其成为http server
 type RegistryService struct{}
 
-func (s RegistryService) ServeHttp(w http.ResponseWriter, r *http.Request) {
+func (s RegistryService) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Println("Request received")
 	switch r.Method {
 	case http.MethodPost:
