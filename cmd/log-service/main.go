@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 	stlog "log"
 	"simple-distributed-system-swoz/log"
+	"simple-distributed-system-swoz/registry"
 	"simple-distributed-system-swoz/service"
 )
 
@@ -12,10 +14,15 @@ func main() {
 
 	// 通常由配置文件或环境变量读取
 	host, port := "localhost", "4000"
+	serviceAddress := fmt.Sprintf("http://%s:%s", host, port)
+	r := registry.Registration{
+		ServiceName: "Log Service",
+		ServiceURL:  serviceAddress,
+	}
 
 	ctx, err := service.Start(
 		context.Background(),
-		"Log Service",
+		r,
 		host,
 		port,
 		log.RegisterHandlers,
