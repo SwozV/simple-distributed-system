@@ -1,6 +1,9 @@
-package business
+package grades
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 type Student struct {
 	ID     int
@@ -18,9 +21,14 @@ func (s Student) AverageScore() float32 {
 
 type Students []Student
 
-var students Students
+var (
+	students Students
 
-func (ss Students) GetById(id int) (*Student, error) {
+	// 保证并发访问安全
+	studentsMutex sync.Mutex
+)
+
+func (ss Students) GetByID(id int) (*Student, error) {
 	for i := range ss {
 		if ss[i].ID == id {
 			return &ss[i], nil

@@ -4,19 +4,17 @@ import (
 	"context"
 	"fmt"
 	stlog "log"
-	"simple-distributed-system-swoz/log"
+	"simple-distributed-system-swoz/grades"
 	"simple-distributed-system-swoz/registry"
 	"simple-distributed-system-swoz/service"
 )
 
 func main() {
-	log.Run("./distributed.log")
-
-	// 通常由配置文件或环境变量读取
-	host, port := "localhost", "4000"
+	host, port := "localhost", "6000"
 	serviceAddress := fmt.Sprintf("http://%s:%s", host, port)
+
 	r := registry.Registration{
-		ServiceName: registry.LogService,
+		ServiceName: registry.GradingService,
 		ServiceURL:  serviceAddress,
 	}
 
@@ -25,12 +23,14 @@ func main() {
 		r,
 		host,
 		port,
-		log.RegisterHandlers,
+		grades.RegisterHandlers,
 	)
 
 	if err != nil {
-		stlog.Fatalln(err)
+		stlog.Fatal(err)
 	}
 
 	<-ctx.Done()
+
+	fmt.Println("Shutting down grading service")
 }
