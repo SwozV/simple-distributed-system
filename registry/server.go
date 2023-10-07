@@ -64,7 +64,7 @@ func (r registry) sendPatch(p patch, url string) error {
 		return err
 	}
 	_, err = http.Post(url, "application/json", bytes.NewBuffer(b))
-	return nil
+	return err
 }
 
 func (r *registry) remove(url string) error {
