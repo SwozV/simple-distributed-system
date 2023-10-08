@@ -5,6 +5,7 @@ import (
 	"fmt"
 	stlog "log"
 	"simple-distributed-system-swoz/grades"
+	"simple-distributed-system-swoz/log"
 	"simple-distributed-system-swoz/registry"
 	"simple-distributed-system-swoz/service"
 )
@@ -14,8 +15,10 @@ func main() {
 	serviceAddress := fmt.Sprintf("http://%s:%s", host, port)
 
 	r := registry.Registration{
-		ServiceName: registry.GradingService,
-		ServiceURL:  serviceAddress,
+		ServiceName:      registry.GradingService,
+		ServiceURL:       serviceAddress,
+		RequiredServices: []registry.ServiceName{registry.LogService},
+		ServiceUpdataURL: serviceAddress + "/services",
 	}
 
 	ctx, err := service.Start(
@@ -28,6 +31,11 @@ func main() {
 
 	if err != nil {
 		stlog.Fatal(err)
+	}
+
+	if logProvider, err := registry.GetProvider(registry.LogService); err == nil {
+		fmt.Printf("Logging service found at %v\n", logProvider)
+		log.SetClientLogger(logProvider, r.ServiceName)
 	}
 
 	<-ctx.Done()
