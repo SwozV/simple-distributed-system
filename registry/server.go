@@ -33,7 +33,50 @@ func (r *registry) add(reg Registration) error {
 
 	err := r.sendRequiredServices(reg)
 
+	r.notify(patch{
+		Added: []patchEntry{
+			patchEntry{
+				Name: reg.ServiceName,
+				URL:  reg.ServiceURL,
+			},
+		},
+	})
+
 	return err
+}
+
+func (r registry) notify(fullpatch patch) {
+	r.mutex.RLock()
+	defer r.mutex.RUnlock()
+
+	//对已注册服务进行循环
+	for _, reg := range r.registrations {
+		go func(reg Registration) {
+			for _, reqService := range reg.RequiredServices {
+				p := patch{Added: []patchEntry{}, Removed: []patchEntry{}}
+				sendUpdate := false
+				for _, added := range fullpatch.Added {
+					if added.Name == reqService {
+						sendUpdate = true
+						p.Added = append(p.Added, added)
+					}
+				}
+				for _, removed := range fullpatch.Removed {
+					if removed.Name == reqService {
+						sendUpdate = true
+						p.Removed = append(p.Removed, removed)
+					}
+				}
+				if sendUpdate {
+					err := r.sendPatch(p, reg.ServiceUpdataURL)
+					if err != nil {
+						log.Println(err)
+						return
+					}
+				}
+			}
+		}(reg)
+	}
 }
 
 func (r registry) sendRequiredServices(reg Registration) error {
@@ -70,6 +113,14 @@ func (r registry) sendPatch(p patch, url string) error {
 func (r *registry) remove(url string) error {
 	for i := range reg.registrations {
 		if reg.registrations[i].ServiceURL == url {
+			r.notify(patch{
+				Removed: []patchEntry{
+					{
+						Name: reg.registrations[i].ServiceName,
+						URL:  reg.registrations[i].ServiceURL,
+					},
+				},
+			})
 			r.mutex.Lock()
 			reg.registrations = append(reg.registrations[:i], reg.registrations[i+1:]...)
 			r.mutex.Unlock()
