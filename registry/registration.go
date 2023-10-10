@@ -7,7 +7,7 @@ type Registration struct {
 	//拓展，使其支持所依赖的其他服务
 	RequiredServices []ServiceName
 
-	ServiceUpdataURL string
+	ServiceUpdateURL string
 }
 
 type ServiceName string
@@ -15,6 +15,7 @@ type ServiceName string
 const (
 	LogService     = ServiceName("LogService")
 	GradingService = ServiceName("GradingService")
+	PortalService  = ServiceName("Portald")
 )
 
 type patchEntry struct {

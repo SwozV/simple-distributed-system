@@ -13,7 +13,7 @@ import (
 
 // 为 register-service 发送 post 请求
 func RegisterService(r Registration) error {
-	serviceUpdateURL, err := url.Parse(r.ServiceUpdataURL)
+	serviceUpdateURL, err := url.Parse(r.ServiceUpdateURL)
 	if err != nil {
 		return err
 	}

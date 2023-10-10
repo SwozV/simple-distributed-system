@@ -68,7 +68,7 @@ func (r registry) notify(fullpatch patch) {
 					}
 				}
 				if sendUpdate {
-					err := r.sendPatch(p, reg.ServiceUpdataURL)
+					err := r.sendPatch(p, reg.ServiceUpdateURL)
 					if err != nil {
 						log.Println(err)
 						return
@@ -94,7 +94,7 @@ func (r registry) sendRequiredServices(reg Registration) error {
 			}
 		}
 	}
-	err := r.sendPatch(p, reg.ServiceUpdataURL)
+	err := r.sendPatch(p, reg.ServiceUpdateURL)
 	if err != nil {
 		return err
 	}
